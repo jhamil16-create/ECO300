@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// MODELOS EXISTENTES
+// ============================================
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Empleado {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  sexo      String
+  cargo     String
+  createdAt DateTime @default(now())
+}
+
+// ============================================
+// MODELOS ECONÓMICOS
+// ============================================
+
+model Producto {
+  id                Int         @id @default(autoincrement())
+  nombre            String
+  descripcion       String?
+  precioVenta       Float
+  costoProduccion   Float
+  unidadMedida      String      @default("unidad")
+  
+  // Relaciones
+  ventas            Venta[]
+  inventarios       Inventario[]
+  costos            Costo[]
+  predicciones      Prediccion[]
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Venta {
+  id                Int         @id @default(autoincrement())
+  productoId        Int
+  cantidad          Float
+  precioUnitario    Float
+  precioTotal       Float
+  fecha             DateTime    @default(now())
+  
+  // Relaciones
+  producto          Producto    @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime    @default(now())
+  
+  @@index([productoId])
+  @@index([fecha])
+}
+
+model Costo {
+  id                Int         @id @default(autoincrement())
+  productoId        Int?
+  tipo              String      // "FIJO" o "VARIABLE"
+  concepto          String
+  monto             Float
+  periodo           String      @default("mensual") // mensual, diario, anual
+  fecha             DateTime    @default(now())
+  
+  // Relaciones
+  producto          Producto?   @relation(fields: [productoId], references: [id], onDelete: SetNull)
+  
+  createdAt         DateTime    @default(now())
+  
+  @@index([productoId])
+  @@index([tipo])
+}
+
+model Inventario {
+  id                Int         @id @default(autoincrement())
+  productoId        Int
+  cantidadActual    Float
+  cantidadMinima    Float       @default(10)
+  cantidadMaxima    Float       @default(1000)
+  ubicacion         String?
+  
+  // Relaciones
+  producto          Producto    @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  movimientos       MovimientoInventario[]
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  @@unique([productoId])
+}
+
+model MovimientoInventario {
+  id                Int         @id @default(autoincrement())
+  inventarioId      Int
+  tipo              String      // "ENTRADA" o "SALIDA"
+  cantidad          Float
+  motivo            String?
+  fecha             DateTime    @default(now())
+  
+  // Relaciones
+  inventario        Inventario  @relation(fields: [inventarioId], references: [id], onDelete: Cascade)
+  
+  @@index([inventarioId])
+  @@index([fecha])
+}
+
+model Prediccion {
+  id                Int         @id @default(autoincrement())
+  productoId        Int
+  demandaPredicha   Float
+  periodo           String      // "semanal", "mensual", "trimestral"
+  fechaPrediccion   DateTime
+  confianza         Float       @default(0.7) // 0-1 nivel de confianza
+  metodo            String      @default("regresion_lineal")
+  
+  // Relaciones
+  producto          Producto    @relation(fields: [productoId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime    @default(now())
+  
+  @@index([productoId])
+  @@index([fechaPrediccion])
+}
+
+model Alerta {
+  id                Int         @id @default(autoincrement())
+  tipo              String      // "SOBREPRODUCCION", "ESCASEZ", "BAJO_MARGEN", "ALTA_DEMANDA"
+  severidad         String      @default("MEDIA") // "BAJA", "MEDIA", "ALTA"
+  titulo            String
+  mensaje           String
+  productoId        Int?
+  leida             Boolean     @default(false)
+  fecha             DateTime    @default(now())
+  
+  @@index([tipo])
+  @@index([leida])
+  @@index([fecha])
+}
+
+model FactorExterno {
+  id                Int         @id @default(autoincrement())
+  tipo              String      // "INFLACION", "CLIMA", "COMPETENCIA", "ESTACIONALIDAD"
+  valor             Float
+  descripcion       String?
+  fecha             DateTime    @default(now())
+  fuente            String?
+  
+  createdAt         DateTime    @default(now())
+  
+  @@index([tipo])
+  @@index([fecha])
+}
