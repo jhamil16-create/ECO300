@@ -37,7 +37,7 @@ COPY . /var/www
 RUN composer install --optimize-autoloader --no-dev
 
 # Install Node dependencies and build assets
-RUN npm install && npm run build
+RUN npm install --legacy-peer-deps && npm run build
 
 # Create system user to run Composer and Artisan Commands
 RUN useradd -G www-data,root -u $uid -d /home/$user $user
