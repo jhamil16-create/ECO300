@@ -23,6 +23,7 @@
         "vue-tsc": "^2.0.24"
     },
     "dependencies": {
+        "@vueuse/core": "^14.1.0",
         "@vueuse/motion": "^3.0.3",
         "chart.js": "^4.5.1",
         "class-variance-authority": "^0.7.1",

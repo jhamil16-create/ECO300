@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import MetricCard from '@/Components/MetricCard.vue'
+import TiltCard from '@/Components/TiltCard.vue'
 import SalesChart from '@/Components/SalesChart.vue'
 import InventoryChart from '@/Components/InventoryChart.vue'
 import AlertsList from '@/Components/AlertsList.vue'
@@ -74,35 +75,53 @@ const props = withDefaults(defineProps<Props>(), {
     <template #subtitle>Sistema de Análisis Empresarial</template>
 
     <!-- Metrics Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-      <MetricCard
-        title="Ventas del Mes"
-        :value="`Bs ${metrics.monthlySales.toLocaleString('es-BO')}`"
-        :trend="12.5"
-        :icon="DollarSign"
-      />
-      <MetricCard
-        title="Producción Actual"
-        :value="`${(salesData.production.reduce((a, b) => a + b, 0) / 1000).toFixed(0)}k unid.`"
-        :trend="5.2"
-        :icon="Factory"
-      />
-      <MetricCard
-        title="Costo Promedio"
-        :value="`Bs ${metrics.averageCost.toFixed(2)}/unid`"
-        :trend="3.1"
-        :icon="TrendingUp"
-      />
-      <MetricCard
-        title="Eficiencia"
-        :value="`${metrics.efficiency}%`"
-        :trend="-1.5"
-        :icon="Package"
-      />
+    <div 
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6"
+      v-motion
+      :initial="{ opacity: 0, y: 20 }"
+      :enter="{ opacity: 1, y: 0, transition: { delay: 200 } }"
+    >
+      <TiltCard>
+        <MetricCard
+          title="Ventas del Mes"
+          :value="`Bs ${metrics.monthlySales.toLocaleString('es-BO')}`"
+          :trend="12.5"
+          :icon="DollarSign"
+        />
+      </TiltCard>
+      <TiltCard>
+        <MetricCard
+          title="Producción Actual"
+          :value="`${(salesData.production.reduce((a, b) => a + b, 0) / 1000).toFixed(0)}k unid.`"
+          :trend="5.2"
+          :icon="Factory"
+        />
+      </TiltCard>
+      <TiltCard>
+        <MetricCard
+          title="Costo Promedio"
+          :value="`Bs ${metrics.averageCost.toFixed(2)}/unid`"
+          :trend="3.1"
+          :icon="TrendingUp"
+        />
+      </TiltCard>
+      <TiltCard>
+        <MetricCard
+          title="Eficiencia"
+          :value="`${metrics.efficiency}%`"
+          :trend="-1.5"
+          :icon="Package"
+        />
+      </TiltCard>
     </div>
 
     <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div 
+      class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"
+      v-motion
+      :initial="{ opacity: 0, y: 20 }"
+      :enter="{ opacity: 1, y: 0, transition: { delay: 400 } }"
+    >
       <!-- Sales vs Production Chart -->
       <Card class="bg-gradient-to-br from-eco-dark/50 to-eco-darkest/50 border-eco-primary/20">
         <CardHeader>
@@ -151,7 +170,7 @@ const props = withDefaults(defineProps<Props>(), {
         <CardTitle class="text-white">Accesos Rápidos</CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
           <Button 
             as="a" 
             href="/inventario"
@@ -172,16 +191,7 @@ const props = withDefaults(defineProps<Props>(), {
             <span>Ventas</span>
           </Button>
           
-          <Button 
-            as="a" 
-            href="/empleados"
-            variant="outline"
-            class="h-auto py-4 flex-col space-y-2 border-eco-primary/30 hover:bg-eco-primary/10 hover:border-eco-primary/50 text-eco-lightest hover:text-white"
-          >
-            <TrendingUp class="w-6 h-6" />
-            <span>Empleados</span>
-          </Button>
-          
+
           <Button 
             as="a" 
             href="/alertas"

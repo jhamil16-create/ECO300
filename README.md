@@ -1,157 +1,187 @@
 # ECO300 - Sistema de Gestión Empresarial
 
-Sistema de gestión empresarial desarrollado para el curso de Economía para la Gestión (ECO300) de la UAGRM. Este proyecto permite gestionar inventario, ventas, empleados y alertas de manera eficiente.
+Sistema de gestión empresarial desarrollado para el curso de Economía para la Gestión (ECO300) de la UAGRM. Este proyecto permite gestionar inventario, ventas, y alertas de manera eficiente, integrando análisis microeconómico avanzado.
 
 ## 📋 Descripción
 
 ECO300 es una aplicación web full-stack que proporciona herramientas completas para la gestión empresarial, incluyendo:
 
-- **Gestión de Inventario**: Control de productos con seguimiento de stock actual, nivel óptimo y punto de reorden
-- **Gestión de Ventas**: Registro y seguimiento de transacciones comerciales con detalles por producto
-- **Gestión de Producción**: Control de ciclos de producción, planificación vs real, y eficiencia
-- **Gestión de Costos**: Categorización de costos (materias primas, mano de obra, marketing, etc.) y seguimiento de proveedores
-- **Predicciones**: Análisis predictivo de ventas basado en factores de demanda y machine learning
-- **Sistema de Alertas**: Notificaciones automáticas para stock crítico, sobreproducción, tendencias de ventas y más
-- **Dashboard Interactivo**: Panel de control con gráficos en tiempo real, métricas clave y análisis visual
-- **Multi-empresa**: Arquitectura que soporta múltiples empresas con datos separados
+- **Gestión de Inventario**: Control de productos con seguimiento de stock actual, nivel óptimo y punto de reorden.
+- **Gestión de Ventas**: Registro y seguimiento de transacciones comerciales con detalles por producto.
+- **Análisis Económico**: Cálculo automático de métricas microeconómicas clave.
+- **Sistema de Alertas**: Notificaciones automáticas para stock crítico y sobreproducción.
+- **Dashboard Interactivo**: Panel de control con gráficos en tiempo real y animaciones 3D.
+- **Diseño Responsivo**: Interfaz optimizada para móviles con navegación flotante.
+
+## 🧪 Datos de Prueba y Credenciales
+
+Para probar el sistema completo, puedes usar las siguientes credenciales pre-configuradas:
+
+- **Usuario**: `admintest@gmail.com`
+- **Contraseña**: `admintest123`
+
+### Generación de Datos
+Si deseas reiniciar o generar nuevos datos de prueba (ventas, productos, inventario), ejecuta el siguiente script:
+
+```bash
+php test_full_flow.php
+```
+Este script creará una empresa, un usuario administrador, productos de prueba y transacciones de venta para alimentar los gráficos.
+
+## 📖 Manual de Uso
+
+### 1. Dashboard
+El panel principal muestra 4 tarjetas métricas con **efecto Tilt 3D** (responden al movimiento del mouse).
+- **Ventas del Mes**: Total monetario de ventas en el mes actual.
+- **Producción Actual**: Cantidad total de unidades producidas/vendidas.
+- **Costo Promedio**: Costo unitario promedio ponderado.
+- **Eficiencia**: Indicador de rendimiento operativo.
+
+### 2. Inventario
+- Accede desde el menú lateral (Escritorio) o la barra inferior (Móvil).
+- **Crear Producto**: Botón "Nuevo Producto". Ingresa nombre, stock inicial, nivel óptimo y punto de reorden.
+- **Alertas**: El sistema marcará en rojo los productos con stock por debajo del punto de reorden.
+
+### 3. Ventas
+- **Registrar Venta**: Selecciona productos del catálogo, ajusta cantidades y precios en el carrito, y confirma la venta.
+- **Historial**: Visualiza las últimas transacciones registradas.
+
+## 📊 Fórmulas Económicas Utilizadas
+
+El sistema implementa lógica de microeconomía avanzada en `EconomicAnalysisService.php`:
+
+### 1. Predicción de Demanda (Regresión Lineal)
+Utiliza el método de mínimos cuadrados para proyectar la demanda del próximo mes basándose en el histórico de los últimos 6 meses.
+- **Fórmula**: $y = mx + b$
+- Donde $m$ (pendiente) y $b$ (intersección) se calculan a partir de los pares $(mes, cantidad)$.
+
+### 2. Rotación de Inventario
+Calcula cuántos días tarda en renovarse el inventario promedio.
+- **Fórmula**: $Días = \frac{Stock Promedio \times 360}{Costo de Ventas}$
+- Ayuda a identificar productos de lento movimiento ("hueso") o alta rotación.
+
+### 3. Punto de Equilibrio (Break-Even Point)
+Determina la cantidad de unidades que se deben vender para cubrir los costos fijos y variables.
+- **Fórmula**: $Q_{eq} = \frac{Costos Fijos}{Precio Unitario - Costo Variable Unitario}$
+
+### 4. Elasticidad Precio de la Demanda
+Mide la sensibilidad de la demanda ante cambios en el precio (Elasticidad Arco).
+- **Fórmula**: $E = \frac{\Delta Q / \bar{Q}}{\Delta P / \bar{P}} = \frac{Q_2 - Q_1}{Q_2 + Q_1} \times \frac{P_2 + P_1}{P_2 - P_1}$
+- **Interpretación**:
+    - $|E| > 1$: Elástica (sensible al precio).
+    - $|E| < 1$: Inelástica (poco sensible).
 
 ## 🛠️ Tecnologías Utilizadas
 
 ### Backend
-- **Laravel 12**: Framework PHP para el desarrollo del backend
-- **PHP 8.2+**: Lenguaje de programación del servidor
-- **MariaDB/MySQL**: Base de datos relacional
-- **Laravel Breeze**: Autenticación y scaffolding
-- **Inertia.js**: Bridge entre Laravel y Vue.js
+- **Laravel 12**: Framework PHP.
+- **PHP 8.2+**: Lenguaje del servidor.
+- **MariaDB/MySQL**: Base de datos.
 
 ### Frontend
-- **Vue.js 3**: Framework JavaScript para la interfaz de usuario
-- **TypeScript**: Tipado estático para JavaScript
-- **Inertia.js**: Integración con Laravel sin necesidad de API REST
-- **Tailwind CSS**: Framework de utilidades CSS
-- **Vite**: Build tool y dev server
-- **Chart.js**: Gráficos y visualización de datos
-- **Lucide Icons**: Iconos modernos
-
-## 📦 Requisitos Previos
-
-Asegúrate de tener instalado lo siguiente en tu sistema:
-
-1.  **PHP 8.2 o superior**: [Descargar PHP](https://windows.php.net/download/)
-    -   Asegúrate de habilitar las extensiones: `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`.
-2.  **Composer**: [Descargar Composer](https://getcomposer.org/download/)
-3.  **Node.js (LTS) y npm**: [Descargar Node.js](https://nodejs.org/)
-4.  **MariaDB o MySQL**: [Descargar XAMPP](https://www.apachefriends.org/es/index.html) (incluye MariaDB) o instalar MySQL por separado.
-5.  **Git**: [Descargar Git](https://git-scm.com/)
-
-### Extensiones Recomendadas para VS Code
-
-Para una mejor experiencia de desarrollo, instala estas extensiones:
-
--   **PHP Intelephense**: Para autocompletado y análisis de PHP.
--   **Vue - Official**: Para soporte de Vue.js y TypeScript.
--   **Tailwind CSS IntelliSense**: Para autocompletado de clases de Tailwind.
--   **Laravel Blade Snippets**: Para sintaxis de Blade (si se usa).
--   **Pretty TypeScript Errors**: Para leer mejor los errores de TS.
+- **Vue.js 3**: Framework reactivo.
+- **Tailwind CSS**: Estilos y diseño responsivo.
+- **Inertia.js**: Monolito moderno.
+- **@vueuse/motion**: Animaciones de entrada.
+- **@vueuse/core**: Interacciones del mouse (Tilt).
 
 ## 🚀 Instalación y Configuración
 
-Sigue estos pasos para configurar el proyecto desde cero.
-
-### 1. Clonar el Repositorio
-
+### 1. Clonar y Dependencias
 ```bash
-git clone <url-del-repositorio>
+git clone <url-repo>
 cd ECO300
-```
-
-### 2. Instalar Dependencias
-
-Instala las dependencias de PHP (Backend):
-```bash
 composer install
-```
-
-Instala las dependencias de Node.js (Frontend):
-```bash
 npm install
 ```
 
-### 3. Configurar Variables de Entorno
-
-Copia el archivo de ejemplo `.env.example` a `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Abre el archivo `.env` y configura la conexión a la base de datos (MariaDB/MySQL):
-
+### 2. Configurar Entorno (.env)
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
-DB_PORT=3306
 DB_DATABASE=eco300
 DB_USERNAME=root
 DB_PASSWORD=
 ```
-*(Ajusta `DB_USERNAME` y `DB_PASSWORD` según tu configuración local. Si usas XAMPP por defecto, el usuario es `root` y la contraseña está vacía).*
 
-### 4. Generar Clave de Aplicación
-
-```bash
-php artisan key:generate
-```
-
-### 5. Configurar Base de Datos
-
-#### Opción A: Script Automático (Recomendado)
-El proyecto incluye un script para crear la base de datos si no existe:
-
+### 3. Base de Datos
 ```bash
 php create_db.php
-```
-
-#### Opción B: Manual
-1.  Abre tu gestor de base de datos (phpMyAdmin, HeidiSQL, DBeaver).
-2.  Crea una nueva base de datos llamada `eco300`.
-
-#### Ejecutar Migraciones
-Una vez creada la base de datos, ejecuta las migraciones para crear las tablas:
-
-```bash
 php artisan migrate
 ```
 
-*(Opcional) Si deseas poblar la base de datos con datos de prueba:*
-```bash
-php artisan db:seed
-```
-
-## ▶️ Ejecución del Proyecto
-
-Para correr el proyecto, necesitas ejecutar dos terminales simultáneamente.
-
-### Terminal 1: Backend (Laravel)
-
-Inicia el servidor de desarrollo de Laravel:
-
+### 4. Ejecutar
+Terminal 1:
 ```bash
 php artisan serve
 ```
-Esto iniciará el backend en `http://localhost:8000`.
-
-### Terminal 2: Frontend (Vite)
-
-Inicia el servidor de desarrollo de Vite (para compilar assets y hot reload):
-
+Terminal 2:
 ```bash
 npm run dev
 ```
 
-### Acceso a la Aplicación
+Visita: **http://localhost:8000**
 
-Abre tu navegador y visita: **[http://localhost:8000](http://localhost:8000)**
+## 🚀 Despliegue a Producción
 
-> **Nota**: No intentes acceder por el puerto de Vite (5173), ya que Laravel maneja el enrutamiento y la inyección de assets.
+Para preparar el proyecto para un entorno productivo (VPS, Servidor Dedicado, Cloud), sigue estos pasos críticos:
 
+### 1. Optimización del Backend (Laravel)
+En el servidor de producción, instala solo las dependencias necesarias y optimiza la carga:
+
+```bash
+# Instalar dependencias sin dev
+composer install --optimize-autoloader --no-dev
+
+# Optimizar configuración y rutas
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+### 2. Construcción del Frontend (Vite)
+Genera los archivos estáticos optimizados para producción. Esto creará la carpeta `public/build`.
+
+```bash
+npm run build
+```
+
+### 3. Configuración del Entorno (.env)
+Asegúrate de cambiar estas variables en tu archivo `.env` de producción:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://tu-dominio.com
+```
+
+### 4. Servidor Web (Nginx/Apache)
+Configura tu servidor web para apuntar a la carpeta `public/` del proyecto.
+
+**Ejemplo Nginx:**
+```nginx
+server {
+    listen 80;
+    server_name tu-dominio.com;
+    root /var/www/eco300/public;
+
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+    }
+}
+```
+
+### 5. Permisos
+Asegúrate de que las carpetas de almacenamiento tengan permisos de escritura:
+
+```bash
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```

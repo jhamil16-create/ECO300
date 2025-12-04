@@ -5,21 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Inventario extends Model
+class ProduccionDetalle extends Model
 {
     use HasFactory;
 
-    protected $table = 'Inventario';
-    protected $primaryKey = 'ID_Inventario';
+    protected $table = 'Produccion_Detalle';
+    protected $primaryKey = 'ID_Detalle';
     public $timestamps = false;
 
     protected $fillable = [
+        'ID_Produccion',
         'ID_Producto',
-        'Stock_Actual',
-        'Nivel_Optimo',
-        'Punto_Reorden',
-        'Fecha_Ultima_Act',
+        'Cantidad',
+        'Costo_Unit',
     ];
+
+    public function registro()
+    {
+        return $this->belongsTo(ProduccionRegistro::class, 'ID_Produccion', 'ID_Produccion');
+    }
 
     public function producto()
     {

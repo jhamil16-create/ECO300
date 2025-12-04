@@ -6,27 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Venta extends Model
 {
-    protected $table = 'Venta';
+    protected $table = 'Ventas_Cabecera';
+    protected $primaryKey = 'ID_Venta';
     public $timestamps = false;
     
     protected $fillable = [
-        'fecha',
-        'total',
-        'empleadoId'
+        'ID_Empresa',
+        'Fecha_Venta',
+        'Total_Venta',
+        'Ticket_Promedio'
     ];
 
     protected $casts = [
-        'fecha' => 'datetime',
-        'total' => 'decimal:2',
+        'Fecha_Venta' => 'datetime',
+        'Total_Venta' => 'decimal:2',
+        'Ticket_Promedio' => 'decimal:2',
     ];
-
-    public function empleado()
-    {
-        return $this->belongsTo(Empleado::class, 'empleadoId');
-    }
 
     public function detalles()
     {
-        return $this->hasMany(DetalleVenta::class, 'ventaId');
+        return $this->hasMany(VentasDetalle::class, 'ID_Venta', 'ID_Venta');
     }
 }

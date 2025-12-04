@@ -34,11 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ventas', [App\Http\Controllers\VentaController::class, 'index'])->name('ventas.index');
     Route::post('/ventas', [App\Http\Controllers\VentaController::class, 'store'])->name('ventas.store');
     
-    // Employee Management
-    Route::get('/empleados', [App\Http\Controllers\EmpleadoController::class, 'index'])->name('empleados.index');
-    Route::post('/empleados', [App\Http\Controllers\EmpleadoController::class, 'store'])->name('empleados.store');
-    Route::patch('/empleados/{id}', [App\Http\Controllers\EmpleadoController::class, 'update'])->name('empleados.update');
-    Route::delete('/empleados/{id}', [App\Http\Controllers\EmpleadoController::class, 'destroy'])->name('empleados.destroy');
+
     
     // Alerts Management
     Route::get('/alertas', [App\Http\Controllers\AlertaController::class, 'index'])->name('alertas.index');
