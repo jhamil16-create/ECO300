@@ -185,3 +185,29 @@ Asegúrate de que las carpetas de almacenamiento tengan permisos de escritura:
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 ```
+
+## 🚂 Despliegue en Railway
+
+Este proyecto está configurado para desplegarse automáticamente en Railway usando Docker.
+
+### Pasos para Desplegar:
+
+1.  **Subir a GitHub**: Asegúrate de que todo tu código (incluyendo el `Dockerfile` y la carpeta `docker/`) esté en tu repositorio.
+2.  **Nuevo Proyecto en Railway**:
+    -   Selecciona "Deploy from GitHub repo".
+    -   Elige tu repositorio.
+3.  **Variables de Entorno**:
+    -   En la pestaña "Variables", agrega las siguientes:
+        -   `APP_KEY`: (Genera una nueva con `php artisan key:generate --show`)
+        -   `APP_DEBUG`: `false`
+        -   `APP_URL`: `https://<tu-dominio-railway>.up.railway.app`
+        -   `DB_CONNECTION`: `mysql`
+        -   `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`: (Usa las variables provistas por el servicio MySQL de Railway).
+4.  **Base de Datos**:
+    -   Agrega un servicio MySQL en tu proyecto Railway.
+    -   Conecta las variables automáticamente o cópialas manualmente.
+5.  **Despliegue**:
+    -   Railway detectará el `Dockerfile` y construirá la imagen.
+    -   El proceso puede tardar unos minutos (instalar dependencias PHP y Node).
+
+¡Listo! Tu aplicación estará corriendo en la URL proporcionada por Railway.
