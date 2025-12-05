@@ -9,7 +9,7 @@ class CostosCategoria extends Model
 {
     use HasFactory;
 
-    protected $table = 'Costos_Categoria';
+    protected $table = 'costos_categoria';
     protected $primaryKey = 'ID_Categoria';
     public $timestamps = false;
 

@@ -317,4 +317,104 @@ class EconomicAnalysisService
             'details' => "P1: $p1, Q1: $q1 -> P2: $p2, Q2: $q2"
         ];
     }
+
+    /**
+     * Check for critical stock levels (Stock <= Reorder Point)
+     */
+    public function checkCriticalStock(int $product_id)
+    {
+        $inventory = Inventario::where('ID_Producto', $product_id)->first();
+        if (!$inventory) return ['alert' => false];
+
+        $reorderPoint = $inventory->Punto_Reorden ?? 10; // Default threshold if null
+        
+        if ($inventory->Stock_Actual > 0 && $inventory->Stock_Actual <= $reorderPoint) {
+            return [
+                'alert' => true,
+                'message' => "Stock crítico ({$inventory->Stock_Actual}). Reordenar pronto.",
+                'recommendation' => "Realizar pedido de reposición."
+            ];
+        }
+
+        return ['alert' => false];
+    }
+
+    /**
+     * Check for stockout (Stock == 0)
+     */
+    public function checkStockout(int $product_id)
+    {
+        $inventory = Inventario::where('ID_Producto', $product_id)->first();
+        if (!$inventory) return ['alert' => false];
+
+        if ($inventory->Stock_Actual <= 0) {
+            return [
+                'alert' => true,
+                'message' => "Stock agotado. No hay unidades disponibles.",
+                'recommendation' => "Reponer inventario inmediatamente."
+            ];
+        }
+
+        return ['alert' => false];
+    }
+
+    /**
+     * Check for overproduction (Stock > Optimal Level)
+     */
+    public function checkOverproduction(int $product_id)
+    {
+        $inventory = Inventario::where('ID_Producto', $product_id)->first();
+        if (!$inventory) return ['alert' => false];
+
+        $optimalLevel = $inventory->Nivel_Optimo;
+        
+        if ($optimalLevel && $inventory->Stock_Actual > $optimalLevel * 1.2) { // 20% buffer
+            return [
+                'alert' => true,
+                'message' => "Sobreproducción detectada ({$inventory->Stock_Actual} vs Óptimo {$optimalLevel}).",
+                'recommendation' => "Reducir producción o promover ventas."
+            ];
+        }
+
+        return ['alert' => false];
+    }
+
+    /**
+     * Check for downward sales trend (Last 3 months)
+     */
+    public function checkSalesTrend(int $product_id, int $id_empresa)
+    {
+        // Get sales count for last 3 months, grouped by month
+        $sales = DB::table('ventas_detalle')
+            ->join('ventas_cabecera', 'ventas_detalle.ID_Venta', '=', 'ventas_cabecera.ID_Venta')
+            ->where('ventas_cabecera.ID_Empresa', $id_empresa)
+            ->where('ventas_detalle.ID_Producto', $product_id)
+            ->where('ventas_cabecera.Fecha_Venta', '>=', Carbon::now()->subMonths(3))
+            ->select(
+                DB::raw('YEAR(ventas_cabecera.Fecha_Venta) as year'),
+                DB::raw('MONTH(ventas_cabecera.Fecha_Venta) as month'),
+                DB::raw('SUM(ventas_detalle.Cantidad) as qty')
+            )
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        if ($sales->count() < 2) return ['alert' => false];
+
+        // Check if latest month is significantly lower than previous
+        $latest = $sales->first()->qty;
+        $previous = $sales->skip(1)->first()->qty;
+
+        if ($previous > 0 && $latest < $previous * 0.8) { // 20% drop
+            return [
+                'alert' => true,
+                'message' => "Tendencia a la baja en ventas detectada.",
+                'recommendation' => "Revisar precios o estrategia de marketing."
+            ];
+        }
+
+        return ['alert' => false];
+    }
 }
+

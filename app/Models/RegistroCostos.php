@@ -9,7 +9,7 @@ class RegistroCostos extends Model
 {
     use HasFactory;
 
-    protected $table = 'Registro_Costos';
+    protected $table = 'registro_costos';
     protected $primaryKey = 'ID_Costo';
     public $timestamps = false;
 

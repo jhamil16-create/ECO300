@@ -14,52 +14,60 @@ class VentaController extends Controller
 {
     public function index()
     {
-        $empresaId = auth()->user()->ID_Empresa ?? 1;
+        $empresaId = auth()->user()?->ID_Empresa ?? 1;
         
-        $ventas = VentaCabecera::where('ID_Empresa', $empresaId)
-            ->with('detalles.producto')
-            ->orderBy('Fecha_Venta', 'desc')
-            ->limit(50)
-            ->get()
-            ->map(function ($venta) {
-                return [
-                    'ID_Venta' => $venta->ID_Venta,
-                    'Fecha_Venta' => $venta->Fecha_Venta,
-                    'Total_Venta' => $venta->Total_Venta,
-                    'Ticket_Promedio' => $venta->Ticket_Promedio,
-                    'detalles' => $venta->detalles->map(function ($detalle) {
-                        return [
-                            'ID_Detalle' => $detalle->ID_Detalle,
-                            'producto' => $detalle->producto ? [
-                                'ID_Producto' => $detalle->producto->ID_Producto,
-                                'Nombre' => $detalle->producto->Nombre,
-                            ] : null,
-                            'Cantidad' => $detalle->Cantidad,
-                            'Precio_Unit' => $detalle->Precio_Unit,
-                            'Total' => $detalle->Total,
-                        ];
-                    }),
-                ];
-            });
-        
-        $productos = Producto::where('ID_Empresa', $empresaId)
-            ->with('inventario')
-            ->whereHas('inventario', function($query) {
-                $query->where('Stock_Actual', '>', 0);
-            })
-            ->get()
-            ->map(function ($producto) {
-                return [
-                    'ID_Producto' => $producto->ID_Producto,
-                    'Nombre' => $producto->Nombre,
-                    'Stock_Actual' => $producto->inventario->Stock_Actual ?? 0,
-                ];
-            });
-        
-        return Inertia::render('Ventas', [
-            'ventas' => $ventas,
-            'productos' => $productos
-        ]);
+        try {
+            $ventas = VentaCabecera::where('ID_Empresa', $empresaId)
+                ->with('detalles.producto')
+                ->orderBy('Fecha_Venta', 'desc')
+                ->limit(50)
+                ->get()
+                ->map(function ($venta) {
+                    return [
+                        'ID_Venta' => $venta->ID_Venta,
+                        'Fecha_Venta' => $venta->Fecha_Venta,
+                        'Total_Venta' => (float) $venta->Total_Venta,
+                        'Ticket_Promedio' => (float) $venta->Ticket_Promedio,
+                        'detalles' => $venta->detalles->map(function ($detalle) {
+                            return [
+                                'ID_Detalle' => $detalle->ID_Detalle,
+                                'producto' => $detalle->producto ? [
+                                    'ID_Producto' => $detalle->producto->ID_Producto,
+                                    'Nombre' => $detalle->producto->Nombre,
+                                ] : null,
+                                'Cantidad' => $detalle->Cantidad,
+                                'Precio_Unit' => (float) $detalle->Precio_Unit,
+                                'Total' => (float) $detalle->Total,
+                            ];
+                        }),
+                    ];
+                });
+            
+            $productos = Producto::where('ID_Empresa', $empresaId)
+                ->with('inventario')
+                ->whereHas('inventario', function($query) {
+                    $query->where('Stock_Actual', '>', 0);
+                })
+                ->get()
+                ->map(function ($producto) {
+                    return [
+                        'ID_Producto' => $producto->ID_Producto,
+                        'Nombre' => $producto->Nombre,
+                        'Stock_Actual' => $producto->inventario->Stock_Actual ?? 0,
+                    ];
+                });
+            
+            return Inertia::render('Ventas', [
+                'ventas' => $ventas,
+                'productos' => $productos
+            ]);
+        } catch (\Exception $e) {
+            return Inertia::render('Ventas', [
+                'ventas' => [],
+                'productos' => [],
+                'error' => 'Error cargando ventas: ' . $e->getMessage()
+            ]);
+        }
     }
 
     public function store(Request $request)
@@ -68,7 +76,7 @@ class VentaController extends Controller
         
         $validated = $request->validate([
             'items' => 'required|array|min:1',
-            'items.*.ID_Producto' => 'required|exists:Productos,ID_Producto',
+            'items.*.ID_Producto' => 'required|exists:productos,ID_Producto',
             'items.*.Cantidad' => 'required|integer|min:1',
             'items.*.Precio_Unit' => 'required|numeric|min:0',
         ]);

@@ -29,6 +29,7 @@ interface Venta {
 interface Props {
   productos: Producto[]
   ventas?: Venta[]
+  error?: string
 }
 
 const props = defineProps<Props>()
@@ -36,11 +37,15 @@ const props = defineProps<Props>()
 const cart = ref<Array<{ producto: Producto; cantidad: number; precioUnit: number }>>([])
 const searchQuery = ref('')
 
+// Debug logging
+console.log('Props received:', props)
+
 const ventaForm = useForm({
   items: [] as Array<{ ID_Producto: number; Cantidad: number; Precio_Unit: number }>
 })
 
 const filteredProductos = computed(() => {
+  if (!props.productos) return []
   if (!searchQuery.value) return props.productos
   return props.productos.filter(p => 
     p.Nombre.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -109,6 +114,10 @@ function submitSale() {
   })
 }
 
+function formatCurrency(value: number | string) {
+  return Number(value).toFixed(2)
+}
+
 function formatDate(dateString: string) {
   const date = new Date(dateString)
   return date.toLocaleDateString('es-BO', { 
@@ -127,6 +136,10 @@ function formatDate(dateString: string) {
   <AppLayout>
     <template #header>Ventas</template>
     <template #subtitle>Registro de Ventas</template>
+
+    <div v-if="props.error" class="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg text-red-500">
+      Error: {{ props.error }}
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
       <!-- Products Selection -->
@@ -214,7 +227,7 @@ function formatDate(dateString: string) {
                   />
                 </div>
                 <p class="text-xs text-eco-accent font-medium">
-                  Subtotal: Bs {{ (item.precioUnit * item.cantidad).toFixed(2) }}
+                  Subtotal: Bs {{ formatCurrency(item.precioUnit * item.cantidad) }}
                 </p>
               </div>
               <div v-if="cart.length === 0" class="text-center py-8 text-eco-lightest/60">
@@ -227,7 +240,7 @@ function formatDate(dateString: string) {
             <div class="pt-4 border-t border-eco-primary/20">
               <div class="flex justify-between items-center mb-4">
                 <span class="text-lg font-medium text-eco-lightest">Total:</span>
-                <span class="text-3xl font-bold text-white">Bs {{ total.toFixed(2) }}</span>
+                <span class="text-3xl font-bold text-white">Bs {{ formatCurrency(total) }}</span>
               </div>
               
               <Button
@@ -278,10 +291,10 @@ function formatDate(dateString: string) {
                     {{ detalle.Cantidad }}
                   </td>
                   <td class="py-3 px-4 text-right text-eco-lightest">
-                    Bs {{ detalle.Precio_Unit.toFixed(2) }}
+                    Bs {{ formatCurrency(detalle.Precio_Unit) }}
                   </td>
                   <td class="py-3 px-4 text-right text-white font-medium">
-                    Bs {{ detalle.Total.toFixed(2) }}
+                    Bs {{ formatCurrency(detalle.Total) }}
                   </td>
                 </tr>
               </template>

@@ -31,19 +31,19 @@ try {
     $email = 'admin@eco300.com';
     $password = 'password123';
     
-    $user = User::where('email', $email)->first();
+    $user = User::where('Email', $email)->first();
     if (!$user) {
         $user = User::create([
             'ID_Empresa' => $empresa->ID_Empresa,
             'Nombre' => 'Admin Demo',
-            'email' => $email,
-            'password' => Hash::make($password),
+            'Email' => $email,
+            'Hash_Password' => Hash::make($password),
             'Rol' => 'Admin'
         ]);
         echo "   -> Usuario creado: $email / $password\n";
     } else {
         // Reset password to ensure we know it
-        $user->password = Hash::make($password);
+        $user->Hash_Password = Hash::make($password);
         $user->save();
         echo "   -> Usuario existente actualizado: $email / $password\n";
     }

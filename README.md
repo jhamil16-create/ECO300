@@ -1,213 +1,95 @@
-# ECO300 - Sistema de Gestión Empresarial
+# ECO300 - Sistema de Gestión Económica Empresarial
 
-Sistema de gestión empresarial desarrollado para el curso de Economía para la Gestión (ECO300) de la UAGRM. Este proyecto permite gestionar inventario, ventas, y alertas de manera eficiente, integrando análisis microeconómico avanzado.
+## 1. Introducción
+**ECO300** es una plataforma integral diseñada para la gestión operativa y el análisis económico de micro y pequeñas empresas. El sistema combina herramientas de administración tradicional (inventario, ventas, producción) con módulos de **Inteligencia de Negocios (BI)** y análisis microeconómico automatizado para facilitar la toma de decisiones estratégicas.
 
-## 📋 Descripción
+---
 
-ECO300 es una aplicación web full-stack que proporciona herramientas completas para la gestión empresarial, incluyendo:
+## 2. Nivel Técnico
+El sistema sigue una arquitectura moderna de **Monolito Modular** utilizando el patrón **MVC (Modelo-Vista-Controlador)** potenciado para comportarse como una **Single Page Application (SPA)**.
 
-- **Gestión de Inventario**: Control de productos con seguimiento de stock actual, nivel óptimo y punto de reorden.
-- **Gestión de Ventas**: Registro y seguimiento de transacciones comerciales con detalles por producto.
-- **Análisis Económico**: Cálculo automático de métricas microeconómicas clave.
-- **Sistema de Alertas**: Notificaciones automáticas para stock crítico y sobreproducción.
-- **Dashboard Interactivo**: Panel de control con gráficos en tiempo real y animaciones 3D.
-- **Diseño Responsivo**: Interfaz optimizada para móviles con navegación flotante.
+*   **Arquitectura de Software**:
+    *   **Backend**: Laravel (PHP) actúa como API y controlador de lógica de negocio.
+    *   **Frontend**: Vue.js renderiza la interfaz de usuario de forma reactiva.
+    *   **Capa de Servicio**: Se implementó un `EconomicAnalysisService` dedicado para encapsular la lógica matemática y estadística compleja (cálculo de elasticidad, predicción de demanda), manteniendo los controladores ligeros.
+    *   **Comunicación**: Inertia.js elimina la necesidad de una API REST compleja, permitiendo que el backend envíe datos directamente a los componentes Vue como "props".
 
-## 🧪 Datos de Prueba y Credenciales
+---
 
-Para probar el sistema completo, puedes usar las siguientes credenciales pre-configuradas:
+## 3. Nivel Económico
+El valor diferencial de este proyecto radica en la aplicación de teoría microeconómica real sobre los datos operativos:
 
-- **Usuario**: `admintest@gmail.com`
-- **Contraseña**: `admintest123`
+*   **Teoría de la Producción**:
+    *   **Eficiencia Productiva**: Cálculo de la eficiencia basado en *output* real vs. recursos utilizados.
+    *   **Análisis de Costos**: Monitoreo de costos medios y marginales para optimizar el nivel de producción.
+*   **Gestión de Inventarios**:
+    *   **Punto de Reorden**: Alertas automáticas basadas en niveles mínimos de stock para evitar roturas de stock (Costos de Escasez).
+    *   **Nivel Óptimo**: Detección de sobreproducción para minimizar Costos de Almacenamiento y Costos de Oportunidad del capital inmovilizado.
+*   **Análisis de Demanda**:
+    *   **Tendencias de Mercado**: Algoritmos que analizan el historial de ventas (últimos 3 meses) para detectar contracciones en la demanda (`Tendencia Baja`).
+    *   **Elasticidad (Implícita)**: El sistema prepara los datos para futuros análisis de sensibilidad precio-demanda.
 
-### Generación de Datos
-Si deseas reiniciar o generar nuevos datos de prueba (ventas, productos, inventario), ejecuta el siguiente script:
+---
 
-```bash
-php test_full_flow.php
-```
-Este script creará una empresa, un usuario administrador, productos de prueba y transacciones de venta para alimentar los gráficos.
+## 4. Funcionalidades Principales
+1.  **Dashboard Ejecutivo**:
+    *   Visualización de KPIs en tiempo real: Ventas mensuales, Producción actual (en unidades), Costo promedio y Eficiencia.
+    *   Gráficas comparativas: *Ventas vs Producción* (análisis de equilibrio) y *Estado de Inventario*.
+2.  **Gestión de Inventario**:
+    *   CRUD completo de productos y categorías.
+    *   Definición de parámetros económicos (Punto de reorden, Nivel óptimo).
+3.  **Registro de Ventas**:
+    *   Punto de venta (POS) rápido con cálculo automático de totales.
+    *   Historial transaccional detallado.
+4.  **Sistema de Alertas Inteligentes**:
+    *   **Stock Crítico**: Aviso inmediato al cruzar el umbral mínimo.
+    *   **Stock Agotado**: Alerta de alta prioridad.
+    *   **Sobreproducción**: Advertencia de ineficiencia por exceso de inventario.
+    *   **Tendencia Baja**: Detección proactiva de caída en ventas.
 
-## 📖 Manual de Uso
+---
 
-### 1. Dashboard
-El panel principal muestra 4 tarjetas métricas con **efecto Tilt 3D** (responden al movimiento del mouse).
-- **Ventas del Mes**: Total monetario de ventas en el mes actual.
-- **Producción Actual**: Cantidad total de unidades producidas/vendidas.
-- **Costo Promedio**: Costo unitario promedio ponderado.
-- **Eficiencia**: Indicador de rendimiento operativo.
+## 5. Tecnologías Utilizadas
+*   **Laravel 10** (PHP): Framework robusto, seguro y escalable para el backend.
+*   **Vue.js 3** (Composition API): Framework progresivo para interfaces dinámicas y reactivas.
+*   **Inertia.js**: El "pegamento" que permite construir una SPA sin la complejidad de una API separada.
+*   **Tailwind CSS**: Framework de utilidad para un diseño moderno, responsivo y rápido.
+*   **MariaDB / MySQL**: Base de datos relacional para la integridad de datos transaccionales.
+*   **Shadcn UI / Lucide Icons**: Componentes de interfaz profesionales y consistentes.
 
-### 2. Inventario
-- Accede desde el menú lateral (Escritorio) o la barra inferior (Móvil).
-- **Crear Producto**: Botón "Nuevo Producto". Ingresa nombre, stock inicial, nivel óptimo y punto de reorden.
-- **Alertas**: El sistema marcará en rojo los productos con stock por debajo del punto de reorden.
+### ¿Por qué estas tecnologías?
+*   **Eficiencia de Desarrollo**: Laravel + Inertia permite desarrollar funcionalidades "Full Stack" a una velocidad superior a la separación tradicional Backend/Frontend.
+*   **Experiencia de Usuario (UX)**: Vue.js ofrece una experiencia fluida sin recargas de página, crucial para un sistema de gestión diario.
+*   **Mantenibilidad**: TypeScript y el tipado fuerte en el backend aseguran un código más limpio y menos propenso a errores.
 
-### 3. Ventas
-- **Registrar Venta**: Selecciona productos del catálogo, ajusta cantidades y precios en el carrito, y confirma la venta.
-- **Historial**: Visualiza las últimas transacciones registradas.
+---
 
-## 📊 Fórmulas Económicas Utilizadas
+## 6. Base de Datos y Backend
+La interacción entre Laravel y la Base de Datos se maneja en dos niveles para optimizar el rendimiento:
 
-El sistema implementa lógica de microeconomía avanzada en `EconomicAnalysisService.php`:
+1.  **Eloquent ORM**: Se utiliza para operaciones transaccionales estándar (Crear un producto, Registrar una venta). Esto garantiza que las relaciones (ej. `Producto` -> `Inventario`) se mantengan íntegras y el código sea legible.
+    *   *Ejemplo*: `$producto->inventario->Stock_Actual`.
+2.  **Query Builder (DB Facade)**: Se utiliza para los análisis económicos pesados y la generación de gráficas en el Dashboard.
+    *   *Razón*: Permite realizar agregaciones complejas (SUM, AVG, JOINS múltiples) directamente en el motor de base de datos, siendo mucho más rápido que procesar miles de objetos en memoria PHP.
+    *   *Caso de uso*: El cálculo de la "Producción Actual", que suma `produccion_detalle.Cantidad` cruzando con `produccion_registro` y filtrando por fecha.
 
-### 1. Predicción de Demanda (Regresión Lineal)
-Utiliza el método de mínimos cuadrados para proyectar la demanda del próximo mes basándose en el histórico de los últimos 6 meses.
-- **Fórmula**: $y = mx + b$
-- Donde $m$ (pendiente) y $b$ (intersección) se calculan a partir de los pares $(mes, cantidad)$.
+---
 
-### 2. Rotación de Inventario
-Calcula cuántos días tarda en renovarse el inventario promedio.
-- **Fórmula**: $Días = \frac{Stock Promedio \times 360}{Costo de Ventas}$
-- Ayuda a identificar productos de lento movimiento ("hueso") o alta rotación.
+## 7. Flujo de Trabajo de la Web
+El flujo típico de un gerente en ECO300 es cíclico y estratégico:
 
-### 3. Punto de Equilibrio (Break-Even Point)
-Determina la cantidad de unidades que se deben vender para cubrir los costos fijos y variables.
-- **Fórmula**: $Q_{eq} = \frac{Costos Fijos}{Precio Unitario - Costo Variable Unitario}$
+1.  **Input (Operación)**:
+    *   El personal registra la **Producción** diaria y las **Ventas** en el sistema.
+    *   Se actualizan los niveles de **Inventario**.
+2.  **Procesamiento (Sistema)**:
+    *   Al cargar, el sistema ejecuta el `EconomicAnalysisService`.
+    *   Compara *Stock Actual* vs *Punto de Reorden* y *Nivel Óptimo*.
+    *   Analiza la pendiente de la curva de ventas reciente.
+3.  **Output (Decisión)**:
+    *   El gerente revisa el **Dashboard** para ver la salud general.
+    *   Revisa la sección de **Alertas**:
+        *   *¿Alerta de Stock Crítico?* -> Acción: Ordenar materia prima.
+        *   *¿Alerta de Tendencia Baja?* -> Acción: Lanzar promoción o ajustar precio.
+        *   *¿Sobreproducción?* -> Acción: Pausar línea de producción.
 
-### 4. Elasticidad Precio de la Demanda
-Mide la sensibilidad de la demanda ante cambios en el precio (Elasticidad Arco).
-- **Fórmula**: $E = \frac{\Delta Q / \bar{Q}}{\Delta P / \bar{P}} = \frac{Q_2 - Q_1}{Q_2 + Q_1} \times \frac{P_2 + P_1}{P_2 - P_1}$
-- **Interpretación**:
-    - $|E| > 1$: Elástica (sensible al precio).
-    - $|E| < 1$: Inelástica (poco sensible).
-
-## 🛠️ Tecnologías Utilizadas
-
-### Backend
-- **Laravel 12**: Framework PHP.
-- **PHP 8.2+**: Lenguaje del servidor.
-- **MariaDB/MySQL**: Base de datos.
-
-### Frontend
-- **Vue.js 3**: Framework reactivo.
-- **Tailwind CSS**: Estilos y diseño responsivo.
-- **Inertia.js**: Monolito moderno.
-- **@vueuse/motion**: Animaciones de entrada.
-- **@vueuse/core**: Interacciones del mouse (Tilt).
-
-## 🚀 Instalación y Configuración
-
-### 1. Clonar y Dependencias
-```bash
-git clone <url-repo>
-cd ECO300
-composer install
-npm install
-```
-
-### 2. Configurar Entorno (.env)
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_DATABASE=eco300
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-### 3. Base de Datos
-```bash
-php create_db.php
-php artisan migrate
-```
-
-### 4. Ejecutar
-Terminal 1:
-```bash
-php artisan serve
-```
-Terminal 2:
-```bash
-npm run dev
-```
-
-Visita: **http://localhost:8000**
-
-## 🚀 Despliegue a Producción
-
-Para preparar el proyecto para un entorno productivo (VPS, Servidor Dedicado, Cloud), sigue estos pasos críticos:
-
-### 1. Optimización del Backend (Laravel)
-En el servidor de producción, instala solo las dependencias necesarias y optimiza la carga:
-
-```bash
-# Instalar dependencias sin dev
-composer install --optimize-autoloader --no-dev
-
-# Optimizar configuración y rutas
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-```
-
-### 2. Construcción del Frontend (Vite)
-Genera los archivos estáticos optimizados para producción. Esto creará la carpeta `public/build`.
-
-```bash
-npm run build
-```
-
-### 3. Configuración del Entorno (.env)
-Asegúrate de cambiar estas variables en tu archivo `.env` de producción:
-
-```env
-APP_ENV=production
-APP_DEBUG=false
-APP_URL=https://tu-dominio.com
-```
-
-### 4. Servidor Web (Nginx/Apache)
-Configura tu servidor web para apuntar a la carpeta `public/` del proyecto.
-
-**Ejemplo Nginx:**
-```nginx
-server {
-    listen 80;
-    server_name tu-dominio.com;
-    root /var/www/eco300/public;
-
-    index index.php index.html;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-    }
-}
-```
-
-### 5. Permisos
-Asegúrate de que las carpetas de almacenamiento tengan permisos de escritura:
-
-```bash
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
-```
-
-## 🚂 Despliegue en Railway
-
-Este proyecto está configurado para desplegarse automáticamente en Railway usando Docker.
-
-### Pasos para Desplegar:
-
-1.  **Subir a GitHub**: Asegúrate de que todo tu código (incluyendo el `Dockerfile` y la carpeta `docker/`) esté en tu repositorio.
-2.  **Nuevo Proyecto en Railway**:
-    -   Selecciona "Deploy from GitHub repo".
-    -   Elige tu repositorio.
-3.  **Variables de Entorno**:
-    -   En la pestaña "Variables", agrega las siguientes:
-        -   `APP_KEY`: (Genera una nueva con `php artisan key:generate --show`)
-        -   `APP_DEBUG`: `false`
-        -   `APP_URL`: `https://<tu-dominio-railway>.up.railway.app`
-        -   `DB_CONNECTION`: `mysql`
-        -   `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`: (Usa las variables provistas por el servicio MySQL de Railway).
-4.  **Base de Datos**:
-    -   Agrega un servicio MySQL en tu proyecto Railway.
-    -   Conecta las variables automáticamente o cópialas manualmente.
-5.  **Despliegue**:
-    -   Railway detectará el `Dockerfile` y construirá la imagen.
-    -   El proceso puede tardar unos minutos (instalar dependencias PHP y Node).
-
-¡Listo! Tu aplicación estará corriendo en la URL proporcionada por Railway.
+Este flujo transforma datos crudos en inteligencia accionable.

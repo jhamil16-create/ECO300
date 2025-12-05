@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Alerta extends Model
 {
-    protected $table = 'Alertas';
+    protected $table = 'alertas';
     protected $primaryKey = 'ID_Alerta';
     public $timestamps = false;
 
@@ -34,6 +34,6 @@ class Alerta extends Model
 
     public function productos()
     {
-        return $this->belongsToMany(Producto::class, 'Alerta_Producto', 'ID_Alerta', 'ID_Producto');
+        return $this->belongsToMany(Producto::class, 'alerta_producto', 'ID_Alerta', 'ID_Producto');
     }
 }

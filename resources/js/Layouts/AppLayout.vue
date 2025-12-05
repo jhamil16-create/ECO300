@@ -44,11 +44,9 @@ const navigation = [
       <!-- Logo -->
       <div class="flex h-16 items-center justify-between px-4 border-b border-eco-primary/20">
         <div class="flex items-center space-x-2 overflow-hidden">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-eco-primary to-eco-accent flex items-center justify-center flex-shrink-0">
-            <span class="text-white font-bold text-sm">E</span>
-          </div>
+          <img src="/ecoLogo.jpg" alt="Fina Logo" class="w-8 h-8 rounded-lg flex-shrink-0 object-cover" />
           <span :class="['text-white font-semibold text-lg transition-opacity duration-300', sidebarOpen ? 'opacity-100' : 'opacity-0']">
-            ECO300
+            Fina
           </span>
         </div>
       </div>
@@ -160,8 +158,6 @@ const navigation = [
                   <h1 class="text-xl sm:text-2xl font-bold text-white" v-motion-slide-visible-once-top>
                     <slot name="header">Dashboard</slot>
                   </h1>
-                  <span class="hidden sm:inline-block text-eco-primary/50 text-xl">|</span>
-                  <span class="hidden sm:inline-block text-eco-lightest font-semibold text-lg" v-motion-slide-visible-once-top :delay="50">ECO300</span>
                 </div>
               </div>
             </div>

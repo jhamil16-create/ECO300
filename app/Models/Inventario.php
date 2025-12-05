@@ -9,7 +9,7 @@ class Inventario extends Model
 {
     use HasFactory;
 
-    protected $table = 'Inventario';
+    protected $table = 'inventario';
     protected $primaryKey = 'ID_Inventario';
     public $timestamps = false;
 

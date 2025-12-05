@@ -23,6 +23,7 @@ class DashboardController extends Controller
             'stockAtRisk' => $this->getStockAtRisk($empresaId),
             'averageCost' => $this->getAverageCost($empresaId),
             'efficiency' => $this->getEfficiency($empresaId),
+            'currentProduction' => $this->getCurrentMonthProduction($empresaId),
         ];
 
         // Datos para gráficos
@@ -66,10 +67,22 @@ class DashboardController extends Controller
         return $total ?? 0;
     }
 
+    private function getCurrentMonthProduction($empresaId)
+    {
+        $total = DB::table('produccion_detalle as pd')
+            ->join('produccion_registro as pr', 'pd.ID_Produccion', '=', 'pr.ID_Produccion')
+            ->where('pr.ID_Empresa', $empresaId)
+            ->whereMonth('pr.Fecha', date('m'))
+            ->whereYear('pr.Fecha', date('Y'))
+            ->sum('pd.Cantidad');
+
+        return $total ?? 0;
+    }
+
     private function getStockAtRisk($empresaId)
     {
-        $count = DB::table('Inventario as i')
-            ->join('Productos as p', 'i.ID_Producto', '=', 'p.ID_Producto')
+        $count = DB::table('inventario as i')
+            ->join('productos as p', 'i.ID_Producto', '=', 'p.ID_Producto')
             ->where('p.ID_Empresa', $empresaId)
             ->whereColumn('i.Stock_Actual', '<', 'i.Punto_Reorden')
             ->count();
@@ -79,7 +92,7 @@ class DashboardController extends Controller
 
     private function getAverageCost($empresaId)
     {
-        $avg = DB::table('Registro_Costos')
+        $avg = DB::table('registro_costos')
             ->where('ID_Empresa', $empresaId)
             ->whereMonth('Fecha', date('m'))
             ->whereYear('Fecha', date('Y'))
@@ -90,7 +103,7 @@ class DashboardController extends Controller
 
     private function getEfficiency($empresaId)
     {
-        $avg = DB::table('Produccion_Registro')
+        $avg = DB::table('produccion_registro')
             ->where('ID_Empresa', $empresaId)
             ->whereMonth('Fecha', date('m'))
             ->whereYear('Fecha', date('Y'))
@@ -117,11 +130,13 @@ class DashboardController extends Controller
             
             $sales[] = $monthSales ?? 0;
 
-            $monthProduction = DB::table('Produccion_Registro')
-                ->where('ID_Empresa', $empresaId)
-                ->whereMonth('Fecha', $date->month)
-                ->whereYear('Fecha', $date->year)
-                ->sum('Costo_Total');
+            // Calculate production cost from details since Costo_Total might be null
+            $monthProduction = DB::table('produccion_detalle as pd')
+                ->join('produccion_registro as pr', 'pd.ID_Produccion', '=', 'pr.ID_Produccion')
+                ->where('pr.ID_Empresa', $empresaId)
+                ->whereMonth('pr.Fecha', $date->month)
+                ->whereYear('pr.Fecha', $date->year)
+                ->sum(DB::raw('pd.Cantidad * pd.Costo_Unit'));
             
             $production[] = $monthProduction ?? 0;
         }
@@ -137,7 +152,10 @@ class DashboardController extends Controller
     {
         $products = Producto::where('ID_Empresa', $empresaId)
             ->with('inventario')
-            ->limit(4)
+            ->whereHas('inventario', function($q) {
+                $q->where('Nivel_Optimo', '>', 0);
+            })
+            ->limit(5)
             ->get();
 
         $labels = [];
@@ -170,15 +188,15 @@ class DashboardController extends Controller
             
             $weeks[] = "Sem " . (4 - $i);
             
-            $weekPlanned = DB::table('Produccion_Planificada')
+            $weekPlanned = DB::table('produccion_planificada')
                 ->where('ID_Empresa', $empresaId)
                 ->whereBetween('Fecha_Inicio', [$weekStart, $weekEnd])
                 ->sum('Cantidad_Planificada');
             
             $planned[] = $weekPlanned ?? 0;
 
-            $weekActual = DB::table('Produccion_Detalle as pd')
-                ->join('Produccion_Registro as pr', 'pd.ID_Produccion', '=', 'pr.ID_Produccion')
+            $weekActual = DB::table('produccion_detalle as pd')
+                ->join('produccion_registro as pr', 'pd.ID_Produccion', '=', 'pr.ID_Produccion')
                 ->where('pr.ID_Empresa', $empresaId)
                 ->whereBetween('pr.Fecha', [$weekStart, $weekEnd])
                 ->sum('pd.Cantidad');

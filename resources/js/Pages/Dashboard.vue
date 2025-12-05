@@ -22,6 +22,7 @@ interface Props {
     stockAtRisk: number
     averageCost: number
     efficiency: number
+    currentProduction: number
   }
   alerts?: any[]
   salesData?: {
@@ -46,7 +47,8 @@ const props = withDefaults(defineProps<Props>(), {
     monthlySales: 0,
     stockAtRisk: 0,
     averageCost: 0,
-    efficiency: 92.0
+    efficiency: 92.0,
+    currentProduction: 0
   }),
   alerts: () => [],
   salesData: () => ({
@@ -92,7 +94,7 @@ const props = withDefaults(defineProps<Props>(), {
       <TiltCard>
         <MetricCard
           title="Producción Actual"
-          :value="`${(salesData.production.reduce((a, b) => a + b, 0) / 1000).toFixed(0)}k unid.`"
+          :value="`${metrics.currentProduction.toLocaleString('es-BO')} unid.`"
           :trend="5.2"
           :icon="Factory"
         />
